@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+subfolder = "VideoFrames"
+while getopts 's:b:o:i:h' OPTION; do
+    case "$OPTION" in
+        o)
+            ftype="$OPTARG"
+            ;;
+        i)
+            source="$OPTARG"
+            ;;
+        b)
+            video_extension="$OPTARG"
+            batch=true
+            echo $batch
+            ;;
+        s)
+            subfolder="$OPTARG"
+            ;;
+        h)
+            echo "script usage:"
+            echo "-o    (filetype MANDATORY)            The filetype of the output pictures [jpg, JPG, jpeg, JPEG, png, PNG, bmp, BMP]"
+            echo "-i    (input-video MANDATORY)         The video you want to extract the frames of [Either path to the video or a video in current directory]"
+            echo "-b    (file extension of the video)   If you want to extract frames off of all videos with the given extension [literally every extension supported by ffmpeg]"
+            echo "-s    (Subfoldername)                 Optionally give a subfolder-name"
+            echo "-h    (call for help)                 Show this help menu"
+            help=true
+            ;;
+        ?)
+            echo "please read ffv -h to get more information!"
+            exit 1
+            ;;
+    esac
+done
+
+shift "$(($OPTIND -1))"
+
+if [ "$help" = true ]; then
+    exit 0
+fi
+
+if [ -z "$ftype" ]; then
+    echo 'Missing -f flag or argument' >&2
+    exit 1
+fi
+
+echo "Filetype to be outputted set to $ftype"
+echo "Video source set to $source"
+
+# functions
+
+ffvj() {
+    filename="$source"
+    xbase=${filename##*/}
+    xpref=${xbase%.*}
+    mkdir $subfolder
+    dirname="$subfolder/$xpref"
+    dirname="$xpref"_jpg
+    mkdir "$dirname"
+    ffmpeg "$dirname"/"$xpref"_%05d.jpg -r 1/1 -i "$filename"
+}
+
+ffvp() {
+    filename="$1"
+    xbase=${filename##*/}
+    xpref=${xbase%.*}
+    mkdir $subfolder
+    dirname="$subfolder/$xpref"_png
+    mkdir "$dirname"
+    ffmpeg "$dirname"/"$xpref"_%05d.png -r 1/1 -i "$filename"
+}
+
+ffvb() {
+    filename="$1"
+    xbase=${filename##*/}
+    xpref=${xbase%.*}
+    mkdir $subfolder
+    dirname="$subfolder/$xpref"
+    dirname="$xpref"_bmp
+    mkdir "$dirname"
+    ffmpeg "$dirname"/"$xpref"_%05d.bmp -r 1/1 -i "$filename"
+}
+
+bffvj() {
+    for i in *."$1"; do
+        [ -f "$i" ] || break
+        source="$i"
+        ffvj "$i"
+    done
+}
+
+bffvb() {
+    for i in *."$1"; do
+        [ -f "$i" ] || break
+        ffvb "$i"
+    done
+}
+
+bffvp() {
+    for i in *."$1"; do
+        [ -f "$i" ] || break
+        ffvp "$i"
+    done
+}
+
+if [ "$batch" = true ]; then
+    case "$ftype" in
+        "png")
+            echo "PNGs will be created one after another!"
+            sleep 1
+            bffvp "$video_extension"
+            ;;
+        "PNG")
+            echo "PNGs will be created one after another!"
+            sleep 1
+            bffvp "$video_extension"
+            ;;
+        "jpg")
+            echo "JPGs will be created one after another!"
+            sleep 1
+            bffvj "$video_extension"
+            ;;
+        "JPG")
+            echo "JPGs will be created one after another!"
+            sleep 1
+            bffvj "$video_extension"
+            ;;
+        "jpeg")
+            echo "JPGs will be created one after another!"
+            sleep 1
+            bffvj "$video_extension"
+            ;;
+        "JPEG")
+            echo "JPGs will be created one after another!"
+            sleep 1
+            bffvj "$video_extension"
+            ;;
+        "bmp")
+            echo "BMPs will be created one after another!"
+            sleep 1
+            bffvb "$video_extension"
+            ;;
+        "BMP")
+            echo "BMPs will be created one after another!"
+            sleep 1
+            bffvb "$video_extension"
+            ;;
+        *)
+            ;;
+    esac
+else
+    case "$ftype" in
+        "png")
+            echo "PNGs will be created!"
+            sleep 1
+            ffvp "$source"
+            ;;
+        "PNG")
+            echo "PNGs will be created!"
+            sleep 1
+            ffvp
+            ;;
+        "jpg")
+            echo "JPGs will be created!"
+            sleep 1
+            ffvj
+            ;;
+        "JPG")
+            echo "JPGs will be created!"
+            sleep 1
+            ffvj
+            ;;
+        "jpeg")
+            echo "JPGs will be created!"
+            sleep 1
+            ffvj
+            ;;
+        "JPEG")
+            echo "JPGs will be created!"
+            sleep 1
+            ffvj
+            ;;
+        "bmp")
+            echo "BMPs will be created!"
+            sleep 1
+            ffvb
+            ;;
+        "BMP")
+            echo "BMPs will be created!"
+            sleep 1
+            ffvb
+            ;;
+        *)
+            echo "unknown filetype for output"
+            exit 1
+            ;;
+    esac
+fi
