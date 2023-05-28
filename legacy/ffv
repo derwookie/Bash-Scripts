@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-subfolder = "VideoFrames"
+subfolder="VideoFrames"
 while getopts 's:b:o:i:h' OPTION; do
     case "$OPTION" in
         o)
@@ -53,10 +53,9 @@ ffvj() {
     xbase=${filename##*/}
     xpref=${xbase%.*}
     mkdir $subfolder
-    dirname="$subfolder/$xpref"
-    dirname="$xpref"_jpg
+    dirname="$subfolder"/"$xpref"_jpg
     mkdir "$dirname"
-    ffmpeg "$dirname"/"$xpref"_%05d.jpg -r 1/1 -i "$filename"
+    ffmpeg "$dirname"/"$xpref"_%05d.jpg -r 1/1 -i "$filename" -loglevel quiet -stats
 }
 
 ffvp() {
@@ -64,9 +63,9 @@ ffvp() {
     xbase=${filename##*/}
     xpref=${xbase%.*}
     mkdir $subfolder
-    dirname="$subfolder/$xpref"_png
+    dirname="$subfolder"/"$xpref"_png
     mkdir "$dirname"
-    ffmpeg "$dirname"/"$xpref"_%05d.png -r 1/1 -i "$filename"
+    ffmpeg "$dirname"/"$xpref"_%05d.png -r 1/1 -i "$filename" -loglevel quiet -stats
 }
 
 ffvb() {
@@ -74,10 +73,9 @@ ffvb() {
     xbase=${filename##*/}
     xpref=${xbase%.*}
     mkdir $subfolder
-    dirname="$subfolder/$xpref"
-    dirname="$xpref"_bmp
+    dirname="$subfolder"/"$xpref"_bmp
     mkdir "$dirname"
-    ffmpeg "$dirname"/"$xpref"_%05d.bmp -r 1/1 -i "$filename"
+    ffmpeg "$dirname"/"$xpref"_%05d.bmp -r 1/1 -i "$filename" -loglevel quiet -stats
 }
 
 bffvj() {

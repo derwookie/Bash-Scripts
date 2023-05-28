@@ -1,3 +1,32 @@
 #!/usr/bin/env bash
 
 # some global variables
+INPUT=""
+DIRECTORY=".VideoFrames"
+BATCH=false
+INFILETYPE="mp4"
+OUTFILETYPE="jpg"
+HELP="Help Menu for this program:\n
+OPTIONS:\n
+ffv -o [output image file format]\te.g. 'jpg', 'jpeg', 'png', 'bmp'\t\t\t\tThe output format you want the frames to be in\n
+ffv -i [input video]\t\t\te.g. 'somevideo.mp4'\t\t\t\t\t\tThe video you want to extract the frames off from\n
+ffv -b [batch [y/N]]\t\t\te.g. 'Y', 'Yes', 'N', 'No' or the lowercase counterparts\tIf you want all files inside your working directory to be extracted\n
+ffv -s [subdirectoryname]\t\te.g. '.VideoFrames'\t\t\t\t\t\tThe Name of the directory containing every videodirectory with extracted frames\n
+ffv -h [nothing]\t\t\t\t\t\t\t\t\t\t\tShow this help-dialogue\n"
+
+while getopts 'h' OPTION; do
+    case "$OPTION" in
+        o)
+            OUTFILETYPE="$OPTARG"
+        h)
+            echo -e $HELP
+            exit 0
+            ;;
+        ?)
+            echo -e "That flag is not known, triggered -h flag:\n\n"
+            echo -e $HELP
+            exit 0
+            ;;
+    esac
+done
+exit 0
