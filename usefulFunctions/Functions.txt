@@ -1,0 +1,50 @@
+neual()
+{
+	nano $HOME/.bashrc
+	source $HOME/.bashrc
+}
+
+upall()
+{
+	yay -Syyyuuu --noconfirm
+	sudo paccache -rk 1
+	sudo paccache -ruk 0
+}
+
+upallrb()
+{
+	waitingTime=${1:-0}
+	sleep $waitingTime
+	upall && reboot
+}
+
+upallsd()
+{
+	waitingTime=${1:-0}
+	sleep $waitingTime
+	upall && sudo shutdown now
+}
+
+getPackages()
+{
+	toFile=${1:-n}
+	if [ $toFile == "n" ]; then
+		comm -23 <(pacman -Qqett | sort) <(pacman -Qqg base-devel | sort | uniq)
+	else
+		comm -23 <(pacman -Qqett | sort) <(pacman -Qqg base-devel | sort | uniq) > ./.packagesList.txt
+		echo "Packages stored into ./.packagesList.txt"
+	fi
+}
+
+getCacheSize()
+{
+	anzahl=$(sudo ls /var/cache/pacman/pkg/ | wc -l)
+	groesse=$(du -sh /var/cache/pacman/pkg/ | cut -f1)
+	echo -e "Anzahl der Pakete:\t" $anzahl
+	echo -e "Größe des Caches:\t" $groesse
+}
+
+ll()
+{
+	exa -lah
+}
